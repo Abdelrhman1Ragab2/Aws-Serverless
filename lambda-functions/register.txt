@@ -1,0 +1,27 @@
+import boto3
+
+def lambda_handler(event, context):
+    # Retrieve the user data from the event
+
+    user_data = event['body']
+    
+    # Create a DynamoDB client
+    dynamodb = boto3.client('dynamodb')
+    
+    # Insert the user data into DynamoDB
+    response = dynamodb.put_item(
+        TableName='User',
+        Item={
+            'userId': {'S': user_data['userId']},
+            'name': {'S': user_data['name']},
+            'email': {'S': user_data['email']},
+            'phone': {'S': user_data['phone']}
+            # Add more attributes as per your requirements
+        }
+    )
+    
+    # Return a response indicating the success or failure of the operation
+    return {
+        'statusCode': 200,
+        'body': 'User signed up successfully!'
+    }

@@ -1,0 +1,31 @@
+import boto3
+import json
+
+def lambda_handler(event, context):
+    # Extract the user ID from the request body
+    body = event['body']
+    user_id = body['userId']
+
+    # Create a DynamoDB client
+    dynamodb = boto3.client('dynamodb')
+
+    try:
+        # Delete the user from the DynamoDB table
+        dynamodb.delete_item(
+            TableName='User',
+            Key={
+                'userId': {'S': user_id}  # Assuming 'userId' is the primary key of type String
+            }
+        )
+
+        # Return a success response
+        return {
+            'statusCode': 200,
+            'body': json.dumps('User deleted successfully')
+        }
+    except Exception as e:
+        # Return an error response
+        return {
+            'statusCode': 500,
+            'body': json.dumps(f'Error deleting user: {str(e)}')
+        }

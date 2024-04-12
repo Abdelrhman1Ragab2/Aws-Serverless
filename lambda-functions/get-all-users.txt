@@ -1,0 +1,28 @@
+import boto3
+import json
+
+def lambda_handler(event, context):
+    # Create a DynamoDB client
+    dynamodb = boto3.client('dynamodb')
+    
+    # Retrieve all users from the DynamoDB table
+    response = dynamodb.scan(
+        TableName='User'
+    )
+    
+    # Extract the user items from the response
+    user_items = response['Items']
+    
+    # Convert DynamoDB attribute values to a JSON-serializable format
+    users = []
+    for user_item in user_items:
+        user = {}
+        for key, value in user_item.items():
+            user[key] = list(value.values())[0]
+        users.append(user)
+    
+    # Return the users as the response
+    return {
+        'statusCode': 200,
+        'body': json.dumps(users)
+    }
